@@ -32529,6 +32529,83 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":32}],160:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ProductModel = require('../models/ProductModel');
+
+module.exports = React.createClass({
+	displayName: 'exports',
+
+	render: function render() {
+		return React.createElement(
+			'div',
+			{ className: 'container' },
+			React.createElement(
+				'div',
+				{ className: 'row' },
+				React.createElement(
+					'form',
+					{ className: 'col s12', onSubmit: this.onAddProduct },
+					React.createElement(
+						'h1',
+						null,
+						'Add Product'
+					),
+					React.createElement(
+						'div',
+						{ className: 'row' },
+						React.createElement(
+							'div',
+							{ className: 'input-field col s12' },
+							React.createElement('input', { type: 'text', ref: 'name', id: 'name' }),
+							React.createElement(
+								'label',
+								{ htmlFor: 'name' },
+								'Name'
+							)
+						)
+					),
+					React.createElement(
+						'div',
+						{ className: 'row' },
+						React.createElement(
+							'div',
+							{ className: 'input-field col s12' },
+							React.createElement('input', { type: 'text', ref: 'product', id: 'product' }),
+							React.createElement(
+								'label',
+								{ htmlFor: 'product' },
+								'Product'
+							)
+						)
+					),
+					React.createElement(
+						'div',
+						{ className: 'row' },
+						React.createElement(
+							'button',
+							{ className: 'waves-effect waves-light btn' },
+							'Add Product'
+						)
+					)
+				)
+			)
+		);
+	},
+	onAddProduct: function onAddProduct(e) {
+		e.preventDefault();
+		console.log('added product');
+		var newProduct = new ProductModel({
+			name: this.refs.name.getDOMNode().value,
+			product: this.refs.product.getDOMNode().value
+		});
+		newProduct.save();
+	}
+
+});
+
+},{"../models/ProductModel":168,"react":159}],161:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32553,7 +32630,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],161:[function(require,module,exports){
+},{"react":159}],162:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32578,7 +32655,55 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],162:[function(require,module,exports){
+},{"react":159}],163:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ProductModel = require('../models/ProductModel');
+
+module.exports = React.createClass({
+	displayName: 'exports',
+
+	getInitialState: function getInitialState() {
+		return {
+			products: []
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var query = new Parse.Query(ProductModel);
+		query
+		// .equalTo('user', Parse.User.current())
+		.find().then(function (products) {
+			console.log(products);
+			_this.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	render: function render() {
+		var productElements = this.state.products.map(function (product) {
+			return React.createElement(
+				'a',
+				{ href: '#product/details/' + product.id },
+				product.get('name')
+			);
+		});
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h1',
+				null,
+				'Products'
+			),
+			productElements
+		);
+	}
+});
+
+},{"../models/ProductModel":168,"react":159}],164:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32672,7 +32797,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],163:[function(require,module,exports){
+},{"react":159}],165:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -32698,6 +32823,7 @@ module.exports = React.createClass({
 			Links.push(this.createNavLink('register', 'Register'));
 		} else {
 			Links.push(this.createNavLink('dashboard', 'Dashboard'));
+			Links.push(this.createNavLink('add-product', 'AddProduct'));
 			Links.push(React.createElement(
 				'li',
 				null,
@@ -32734,7 +32860,7 @@ module.exports = React.createClass({
 		if (currentUrl === url) {
 			return React.createElement(
 				'li',
-				{ className: 'active' },
+				{ key: url, className: 'active' },
 				React.createElement(
 					'a',
 					{ href: '#' + url },
@@ -32744,7 +32870,7 @@ module.exports = React.createClass({
 		} else {
 			return React.createElement(
 				'li',
-				null,
+				{ key: url },
 				React.createElement(
 					'a',
 					{ href: '#' + url },
@@ -32755,7 +32881,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"backbone":1,"react":159}],164:[function(require,module,exports){
+},{"backbone":1,"react":159}],166:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32853,7 +32979,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],165:[function(require,module,exports){
+},{"react":159}],167:[function(require,module,exports){
 'use strict';
 var React = require('react');
 var Backbone = require('backbone');
@@ -32865,6 +32991,8 @@ var HomeComponent = require('./components/HomeComponent');
 var DashboardComponent = require('./components/DashboardComponent');
 var LoginComponent = require('./components/LoginComponent');
 var RegisterComponent = require('./components/RegisterComponent');
+var AddProductForm = require('./components/AddProductForm');
+var ListProducts = require('./components/ListProducts');
 
 Parse.initialize('6g2KhoTvaKHA5EnH5chPfBswiOdGGb0YcUfHYk7e', 'wB4uBvaSIuAquXA3uJllCFQqv6OocxPSEhevan0h');
 
@@ -32874,6 +33002,8 @@ var Router = Backbone.Router.extend({
 	routes: {
 		'': 'home',
 		'dashboard': 'dashboard',
+		'add-product': 'addProduct',
+		'list-products': 'listProducts',
 		'login': 'login',
 		'register': 'register'
 	},
@@ -32900,6 +33030,16 @@ var Router = Backbone.Router.extend({
 		} else {
 			React.render(React.createElement(RegisterComponent, { router: this }), app);
 		}
+	},
+	addProduct: function addProduct() {
+		if (!Parse.User.current()) {
+			this.navigate('login', { trigger: true });
+		} else {
+			React.render(React.createElement(AddProductForm, null), app);
+		}
+	},
+	listProducts: function listProducts() {
+		React.render(React.createElement(ListProducts, null), app);
 	}
 });
 
@@ -32908,7 +33048,14 @@ Backbone.history.start();
 
 React.render(React.createElement(NavigationComponent, { router: r }), document.getElementById('nav'));
 
-},{"./components/DashboardComponent":160,"./components/HomeComponent":161,"./components/LoginComponent":162,"./components/NavigationComponent":163,"./components/RegisterComponent":164,"backbone":1,"backbone/node_modules/underscore":2,"jquery":4,"react":159}]},{},[165])
+},{"./components/AddProductForm":160,"./components/DashboardComponent":161,"./components/HomeComponent":162,"./components/ListProducts":163,"./components/LoginComponent":164,"./components/NavigationComponent":165,"./components/RegisterComponent":166,"backbone":1,"backbone/node_modules/underscore":2,"jquery":4,"react":159}],168:[function(require,module,exports){
+'use strict';
+
+module.exports = Parse.Object.extend({
+	className: 'Product'
+});
+
+},{}]},{},[167])
 
 
 //# sourceMappingURL=bundle.js.map

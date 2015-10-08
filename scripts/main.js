@@ -9,6 +9,8 @@ var HomeComponent = require('./components/HomeComponent');
 var DashboardComponent = require('./components/DashboardComponent');
 var LoginComponent = require('./components/LoginComponent');
 var RegisterComponent = require('./components/RegisterComponent');
+var AddProductForm = require('./components/AddProductForm');
+var ListProducts = require('./components/ListProducts');
 
 Parse.initialize(
 	'6g2KhoTvaKHA5EnH5chPfBswiOdGGb0YcUfHYk7e', 
@@ -21,6 +23,8 @@ var Router = Backbone.Router.extend({
 	routes: {
 		'': 'home',
 		'dashboard': 'dashboard',
+		'add-product': 'addProduct',
+		'list-products': 'listProducts',
 		'login': 'login',
 		'register': 'register'
 	},
@@ -53,6 +57,23 @@ var Router = Backbone.Router.extend({
 			React.render(<RegisterComponent router={this} />, app);
 		}
 		
+	},
+	addProduct: function(){
+		if(!Parse.User.current()) {
+			this.navigate('login', {trigger: true});
+		}
+		else {
+			React.render(
+				<AddProductForm />,
+				app
+			);
+		}
+	},
+	listProducts: function(){
+		React.render(
+			<ListProducts />,
+			app
+			);
 	}
 });
 
